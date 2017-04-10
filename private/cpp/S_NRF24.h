@@ -1,8 +1,7 @@
-/******************************************************************************
- * @author: Hugo Cortes
- * @file: S_NRF24.h
- * 
- *****************************************************************************/
+/**
+ * @author Hugo Cortes
+ * @file S_NRF24.h
+ */
 
 #ifndef S_NRF24_H
 #define S_NRF24_H
@@ -10,8 +9,7 @@
 #include <stdint.h>
 #include "RF24Payload.h"
 
-class S_NRF24
-{
+class S_NRF24 {
 public:
     static S_NRF24* instance();
     static void setup(uint8_t nodeID);
@@ -22,7 +20,6 @@ public:
     RF24Payload sendRF24Payload(RF24Payload payload, uint8_t nodeID);
     
     void debugPrint();
-    void debugPrintDetails();
     void debugSend(uint32_t data, uint8_t nodeID);
     void debugMasterSend(uint32_t data, uint8_t nodeID);
     void debugRead();

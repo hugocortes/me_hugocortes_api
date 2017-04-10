@@ -42,4 +42,3 @@ ${PROGRAM}:${SOURCES}
     
 clean:
 	rm -rf $(PROGRAM)
-	

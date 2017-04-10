@@ -53,7 +53,7 @@ void setup()
 void loop()
 {
     S_NRF24::instance()->refresh(100);
-    if(S_NRF24::instance()->isPacketAvailable())
+    if (S_NRF24::instance()->isPacketAvailable())
     {
         RF24Payload payloadIn;
         payloadIn = S_NRF24::instance()->readRF24Payload();
@@ -100,14 +100,14 @@ void sendGetSensor(RF24Payload payloadIn)
                 h = dht.readHumidity();
                 f = dht.readTemperature(true);
             }
-            if(!isnan(h) && !isnan(f)) data = dht.computeHeatIndex(f,h);
+            if (!isnan(h) && !isnan(f)) data = dht.computeHeatIndex(f,h);
             break;
         default:
             strncpy(payloadOut.rfStatus, "invalid_sen\0", sizeof("invalid_sen\0"));
             S_NRF24::instance()->sendRF24Payload(payloadOut, MASTER_ID);
             return;
     }
-    if(isnan(data) or data == NULL) 
+    if (isnan(data) or data == NULL) 
     {
         strncpy(payloadOut.rfStatus, "sens_err\0", sizeof("sens_err\0"));
     }

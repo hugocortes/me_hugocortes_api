@@ -1,8 +1,7 @@
-/******************************************************************************
- * @author: Hugo Cortes
- * @file: S_NRF24.cpp
- * 
- *****************************************************************************/
+/**
+ * @author Hugo Cortes
+ * @file S_NRF24.cpp
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 // Comment/Uncomment for RPi
@@ -31,50 +30,60 @@ RF24Mesh    mesh(radio, network);
 
 S_NRF24* S_NRF24::sInstance = NULL;
 
-S_NRF24::S_NRF24(uint8_t nodeID)
-{
-    mesh.setNodeID(nodeID); // Set to master node
+/**
+ * nRF24 mesh network setup
+ */
+S_NRF24::S_NRF24(uint8_t nodeID) {
+    mesh.setNodeID(nodeID); // Set to nodeID (0 being master)
     mesh.begin();           // Connect to the mesh
 }
 
-S_NRF24* S_NRF24::instance()
-{
-    if(!sInstance)
-    {
+/**
+ * Only want one instance
+ */
+S_NRF24* S_NRF24::instance() {
+    if (!sInstance) {
         printf("Initalize RF24 by calling setup(nodeID)\n");
         return NULL;
     }
     return sInstance;
 }
 
-void S_NRF24::setup(uint8_t nodeID)
 /**
- * @purpose: nRF24 radio setup with given node id
+ * nRF24 radio setup with given node id
  */
-{
-    if(!sInstance) sInstance = new S_NRF24(nodeID);
+void S_NRF24::setup(uint8_t nodeID) {
+    if (!sInstance) sInstance = new S_NRF24(nodeID);
     else printf("ERROR! Already initialized!\n");
-    
 }
 
-void S_NRF24::refresh()
-{
+/**
+ * Keeps the mesh network alive
+ */
+void S_NRF24::refresh() {
     mesh.update();
-    if(mesh.getNodeID() == 0) mesh.DHCP();
+    if (mesh.getNodeID() == 0) mesh.DHCP();
 }
 
-void S_NRF24::refresh(uint16_t time)
-{
+/**
+ * Refresh for a given ms time
+ *
+ * @param time
+ */
+void S_NRF24::refresh(uint16_t time) {
     unsigned long millisTimer = millis();
-    while(millis() - millisTimer <= time) S_NRF24::refresh();
+    while (millis() - millisTimer <= time) S_NRF24::refresh();
 }
 
-RF24Payload S_NRF24::sendRF24Payload(RF24Payload payload, uint8_t nodeID)
-{
-    if(!mesh.write(&payload, 'M', sizeof(payload), nodeID))
-    {
-        if(!mesh.checkConnection())
-        {
+/**
+ * Send the nRF24 payload to given nodeID
+ *
+ * @param payload, nodeID
+ * @returns {Array}
+ */
+RF24Payload S_NRF24::sendRF24Payload(RF24Payload payload, uint8_t nodeID) {
+    if (!mesh.write(&payload, 'M', sizeof(payload), nodeID)) {
+        if (!mesh.checkConnection()) {
             printf("Renewing address...\n");
             mesh.renewAddress(); 
         }
@@ -84,31 +93,32 @@ RF24Payload S_NRF24::sendRF24Payload(RF24Payload payload, uint8_t nodeID)
     return payload;
 }
 
-RF24Payload S_NRF24::readRF24Payload()
-{
+/**
+ * Read the incoming nRF24 payload
+ *
+ * @returns {Array}
+ */
+RF24Payload S_NRF24::readRF24Payload() {
     RF24Payload payloadIn;
     unsigned long waitBegin = millis();
     bool timeout = false;
-    while(!network.available())
-    {
-        if(signed(millis() - waitBegin) > 500)
-        {
+
+    // Wait for a packet to be available flag it as a timeout
+    while (!network.available()) {
+        if (signed(millis() - waitBegin) > 500) {
             timeout = true;
             break;
         }
     }
-    if(timeout)
-    {
+    if (timeout) {
         printf("Response timed out.\n");
         strncpy(payloadIn.rfStatus, "timeout\0", sizeof("timeout\0"));
         return payloadIn;
     }
-    else
-    {
+    else {
         RF24NetworkHeader header;
         network.peek(header);
-        switch(header.type)
-        {
+        switch (header.type) {
             case 'M':
                 network.read(header,&payloadIn,sizeof(payloadIn)); 
                 printf("Incoming from node: 0%o\n",header.from_node);
@@ -117,31 +127,38 @@ RF24Payload S_NRF24::readRF24Payload()
                 printf("Rcv bad type %d from 0%o\n",header.type,header.from_node); 
                 strncpy(payloadIn.rfStatus, "fail_rx\0", sizeof("fail_rx\0"));
         }
-        
     }
     return payloadIn;
 }
 
-bool S_NRF24::isPacketAvailable()
-{
+/**
+ * Check if a packet is available
+ * 
+ * @returns bool
+ */
+bool S_NRF24::isPacketAvailable() {
     return network.available();
 }
 
-
-
-
-void S_NRF24::debugPrint()
 /**
- * @purpose: Debug the current radio status by printing info.
+ * Prints radio module details
  */
-{
+void S_NRF24::debugPrint() {
     radio.printDetails();
+    printf("getNodeID: %u\n", mesh.getNodeID());
+    
+    // Print all the connected node ids
+    for (uint8_t i=0; i<mesh.addrListTop; i++) {
+        printf("node IDs: %u\n", mesh.addrList[i].nodeID);
+    }
 }
 
-void S_NRF24::debugRead()
-{
+/**
+ * Read debugging
+ */
+void S_NRF24::debugRead() {
     // Check for incoming data from the sensors
-    while(network.available()){
+    while (network.available()) {
         //    printf("rcv\n");
         RF24NetworkHeader header;
         network.peek(header);
@@ -151,42 +168,31 @@ void S_NRF24::debugRead()
     }
 }
 
-void S_NRF24::debugSend(uint32_t data, uint8_t nodeID)
-{   
+void S_NRF24::debugSend(uint32_t data, uint8_t nodeID) {
     // Send an 'M' type to other Node containing the current millis()
-    if(!mesh.write(&data,'M',sizeof(data), nodeID)){
-        if( ! mesh.checkConnection() ){
+    if (!mesh.write(&data,'M',sizeof(data), nodeID)) {
+        if (!mesh.checkConnection()) {
             printf("Renewing address...\n");
             mesh.renewAddress(); 
-        }else{
+        }
+        else {
             printf("Send fail. Test OK\n");
         }
     }
 }
 
-void S_NRF24::debugMasterSend(uint32_t data, uint8_t nodeID)
-{
+void S_NRF24::debugMasterSend(uint32_t data, uint8_t nodeID) {
     RF24NetworkHeader header;
     int16_t address = mesh.getAddress(nodeID);
-    if(address != -1) header = RF24NetworkHeader(address, 'M');
-    else
-    {
+    if (address != -1) header = RF24NetworkHeader(address, 'M');
+    else {
         printf("Unknown node id!\n");
         return;  
     } 
-    if( network.write(header, &data, sizeof(data) ))
-    {
+    if (network.write(header, &data, sizeof(data))) {
         printf("Send OK\n");
     }
-    else
-    {
+    else {
         printf("Send Fail\n");
     }
 }
-
-void S_NRF24::debugPrintDetails()
-{
-    printf("getNodeID: %u\n", mesh.getNodeID());
-}
-
-
