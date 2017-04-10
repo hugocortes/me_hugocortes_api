@@ -1,0 +1,232 @@
+<!-- web client for a simple server-side application to demonstrate running a node API Appserver on a Raspberry Pi to display I/O values in a web browser -->
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hugo's API</title>
+
+    <script src="/plugins/jquery-3.0.0.min.js"></script>
+    <script src="/js/client.js"></script>
+  </head>
+  <body>
+    <h1>Hugo's Raspberry Pi API Server</h1>
+
+    <h2>Read Sensor Data From Arduino</h2>
+    <ul>
+      <li>
+        URL
+          <ul style="list-style-type:none">
+            <li>/radio/f:arduino_id/sensor/:sensor_type</li>
+          </ul>
+      </li>
+      <li>Method: <b>GET</b></li>
+      <li>
+        URL Params
+          <ul style="list-style-type:none">
+            <li>Required:</li>
+            <ul style="list-style-type:none">
+              <li>arduino_id=[integer]</li>
+              <li>sensor_type=[string]</li>
+              <ul>
+                <li>temp</li>
+                <li>heat</li>
+                <li>humidity</li>
+              </ul>
+            </ul>
+          </ul>
+      </li>
+      <li>
+        Data Params:
+          <ul style="list-style-type:none">
+            <li>None</li>
+          </ul>
+      </li>
+      <li>
+        Success Response:
+          <ul style="list-style-type:none">
+            <li><b>Code:</b> 200</li>
+            <li><b>Content:</b> {"status":"success","id":"f1","sensor":"temp","sensor_val":"75.739998"}</li>
+          </ul>
+      </li>
+      <li>
+        Error Response:
+          <ul style="list-style-type:none">
+            <li>Todo</li>
+          </ul>
+      </li>
+      <li>
+        Sample Call: <a href="http://api.hugocortes.me/radio/f1/sensor/temp">http://api.hugocortes.me/radio/f1/sensor/temp</a>
+      </li>
+    </ul>
+
+    <h2>Read Arduino Pin Value</h2>
+    <ul>
+      <li>
+        URL
+          <ul style="list-style-type:none">
+            <li>/radio/f:arduino_id/pin/:pin</li>
+          </ul>
+      </li>
+      <li>Method: <b>GET</b></li>
+      <li>
+        URL Params
+          <ul style="list-style-type:none">
+            <li>Required:</li>
+            <ul style="list-style-type:none">
+              <li>arduino_id=[integer]</li>
+              <li>pin=[integer]</li>
+            </ul>
+          </ul>
+      </li>
+      <li>
+        Data Params:
+          <ul style="list-style-type:none">
+            <li>None</li>
+          </ul>
+      </li>
+      <li>
+        Success Response:
+          <ul style="list-style-type:none">
+            <li><b>Code:</b> 200</li>
+            <li><b>Content:</b> {"status":"success","id":"f1","pin":"1","pin_val":"1"}</li>
+          </ul>
+      </li>
+      <li>
+        Error Response:
+          <ul style="list-style-type:none">
+            <li>Todo</li>
+          </ul>
+      </li>
+      <li>
+        Sample Call: <a href="http://api.hugocortes.me/radio/f1/pin/2">http://api.hugocortes.me/radio/f1/pin/2</a>
+      </li>
+    </ul>
+
+
+    <h2>Write to Arduino Pin</h2>
+    <ul>
+      <li>
+        URL
+          <ul style="list-style-type:none">
+            <li>/radio/f:arduino_id/pin/:pin</li>
+          </ul>
+      </li>
+      <li>Method: <b>PUT</b></li>
+      <li>
+        URL Params
+          <ul style="list-style-type:none">
+            <li>Required:</li>
+            <ul style="list-style-type:none">
+              <li>arduino_id=[integer]</li>
+              <li>pin=[integer]</li>
+            </ul>
+          </ul>
+      </li>
+      <li>
+        Data Params:
+          <ul style="list-style-type:none">
+            <li>TODO</li>
+          </ul>
+      </li>
+      <li>
+        Success Response:
+          <ul style="list-style-type:none">
+            <li><b>Code:</b> TODO</li>
+            <li><b>Content:</b> TODO</li>
+          </ul>
+      </li>
+      <li>
+        Error Response:
+          <ul style="list-style-type:none">
+            <li>Todo</li>
+          </ul>
+      </li>
+      <li>
+        Sample Call: <a href="http://api.hugocortes.me/">TODO</a>
+      </li>
+    </ul>
+
+
+    <h2>Read GPIO Pin from Raspberry Pi</h2>
+    <ul>
+      <li>
+        URL
+          <ul style="list-style-type:none">
+            <li>/rpi/gpio/gpio:id</li>
+          </ul>
+      </li>
+      <li>Method: <b>GET</b></li>
+      <li>
+        URL Params
+          <ul style="list-style-type:none">
+            <li>Required:</li>
+            <ul style="list-style-type:none">
+              <li>id=[integer]</li>
+            </ul>
+          </ul>
+      </li>
+      <li>
+        Data Params:
+          <ul style="list-style-type:none">
+            <li>None</li>
+          </ul>
+      </li>
+      <li>
+        Success Response:
+          <ul style="list-style-type:none">
+            <li><b>Code:</b> 200</li>
+            <li><b>Content:</b> {"usage":"i2c","name":"sda","value":"0"}</li>
+          </ul>
+      </li>
+      <li>
+        Error Response:
+          <ul style="list-style-type:none">
+            <li>Todo</li>
+          </ul>
+      </li>
+      <li>
+        Sample Call: <a href="http://api.hugocortes.me/rpi/gpio/gpio2">http://api.hugocortes.me/rpi/gpio/gpio2</a>
+      </li>
+    </ul>
+
+    <h2>Read All GPIO Pins from Raspberry Pi</h2>
+    <ul>
+      <li>
+        URL
+          <ul style="list-style-type:none">
+            <li>/rpi/gpio/</li>
+          </ul>
+      </li>
+      <li>Method: <b>GET</b></li>
+      <li>
+        URL Params
+          <ul style="list-style-type:none">
+            <li>None</li>
+          </ul>
+      </li>
+      <li>
+        Data Params:
+          <ul style="list-style-type:none">
+            <li>None</li>
+          </ul>
+      </li>
+      <li>
+        Success Response:
+          <ul style="list-style-type:none">
+            <li><b>Code:</b> 200</li>
+            <li><b>Content:</b> {Todo}</li>
+          </ul>
+      </li>
+      <li>
+        Error Response:
+          <ul style="list-style-type:none">
+            <li>Todo</li>
+          </ul>
+      </li>
+      <li>
+        Sample Call: <a href="http://api.hugocortes.me/rpi/gpio">http://api.hugocortes.me/rpi/gpio</a>
+      </li>
+    </ul>
+
+  </body>
+</html>

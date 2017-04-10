@@ -1,0 +1,89 @@
+{
+  "gpio2":{
+    "usage": "i2c",
+    "name": "sda",
+    "value": "0"
+  },
+  "gpio3":{
+    "usage": "i2c",
+    "name": "scl",
+    "value": "0"
+  },
+  "gpio4":{
+    "usage": "gpio",
+    "name": "none",
+    "value": "0"
+  },
+  
+  "gpio7":{
+    "usage": "spi",
+    "name": "ce1",
+    "value": "0"
+  },
+  "gpio8":{
+    "usage": "spi",
+    "name": "ce0",
+    "value": "0"
+  }, 
+  "gpio9":{
+    "usage": "spi",
+    "name": "miso",
+    "value": "0"
+  },
+  "gpio10":{
+    "usage": "spi",
+    "name": "mosi",
+    "value": "0"
+  },
+  "gpio11":{
+    "usage": "spi",
+    "name": "clk",
+    "value": "0"
+  },
+  "gpio14":{
+    "usage": "uart",
+    "name": "txd",
+    "value": "0"
+  },
+  "gpio15":{
+    "usage": "uart",
+    "name": "rxd",
+    "value": "0"
+  },
+  "gpio17":{
+    "usage": "uart-rts",
+    "name": "none",
+    "value": "0"
+  },
+  "gpio18":{
+    "usage": "none",
+    "name": "none",
+    "value": "0"
+  },
+  "gpio22":{
+    "usage": "none",
+    "name": "none",
+    "value": "0"
+  },
+  "gpio23":{
+    "usage": "none",
+    "name": "none",
+    "value": "0"
+  },
+  "gpio24":{
+    "usage": "none",
+    "name": "none",
+    "value": "0"
+  },
+  "gpio25":{
+    "usage": "none",
+    "name": "none",
+    "value": "0"
+  },
+  "gpio27":{
+    "usage": "none",
+    "name": "none",
+    "value": "0"
+  },
+  "cmd": "success"
+}
