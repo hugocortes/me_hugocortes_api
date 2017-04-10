@@ -32,9 +32,9 @@ const uint8_t PUT_PIN    = 2;
 const uint8_t GET_SENSOR = 3;
 
 // API Call Strings
-const char API_GET_SENSOR[] = {"get_sensor"};
-const char API_GET_PIN[]    = {"get_pin"};
-const char API_PUT_PIN[]    = {"put_pin"};
+const char API_GET_SENSOR[] = {"getSensor"};
+const char API_GET_PIN[]    = {"getPin"};
+const char API_PUT_PIN[]    = {"putPin"};
 
 // SENSOR VALUES
 const uint8_t TEMP_SENS  = 1;
@@ -74,6 +74,11 @@ int main(int argc, char* argv[]) {
         // placeholder, will need to update Arduino side as well
         return 0;
     }
+    else if (!strcmp(argv[1], "setup")) {
+        debugRadio();
+        S_NRF24::instance()->refresh(10000);
+        return 0;
+    }
     else if (argc != 4 && argc != 5) {
         printf("Usage: sudo ./program {api call} {id} {pin|sensor} {value|from}\n");
         return 1;
@@ -88,7 +93,7 @@ int main(int argc, char* argv[]) {
     if      (!strcmp(argv[API_CALL], API_GET_SENSOR)) payloadOut = getSensorPayload(argv[3]);
     else if (!strcmp(argv[API_CALL], API_GET_PIN))    payloadOut = getGetPinPayload(argv[3]);
     else if (!strcmp(argv[API_CALL], API_PUT_PIN))    payloadOut = getPutPinPayload(argv[3], argv[4]);
-    else strncpy(payloadOut.rfStatus, "unkwn_call\0", sizeof("unkwn_call\0"));
+    else strncpy(payloadOut.rfStatus, "unkwnCall\0", sizeof("unkwnCall\0"));
 
     if (!strcmp(payloadOut.rfStatus, "master")) {
         // Sending
@@ -98,7 +103,7 @@ int main(int argc, char* argv[]) {
         else if (!strcmp(argv[ID], F2)) {
             payloadOut = S_NRF24::instance()->sendRF24Payload(payloadOut, F2_ID);
         }
-        else strncpy(payloadOut.rfStatus, "unkwn_id\0", sizeof("unkwn_id\0"));
+        else strncpy(payloadOut.rfStatus, "unkwnId\0", sizeof("unkwnId\0"));
         
         // Receiving
         if (!strcmp(payloadOut.rfStatus, "success")) {
@@ -110,7 +115,7 @@ int main(int argc, char* argv[]) {
     }
     else writeJsonFail(payloadOut);
 
-    printf("Finished MasterRFComms.cpp\n");
+    printf("Finished radio_comms.cpp\n");
     printf("-----------------------------------------------\n");
     return 0;
 }
@@ -130,7 +135,7 @@ RF24Payload getSensorPayload(char* sensor) {
     if      (!strcmp(sensor, "temp"))     payload.sensor = TEMP_SENS;
     else if (!strcmp(sensor, "heat"))     payload.sensor = HEAT_SENS;
     else if (!strcmp(sensor, "humidity")) payload.sensor = HUMID_SENS;
-    else     strncpy(payload.rfStatus, "unk_sensor\0", sizeof("unk_sensor\0"));
+    else     strncpy(payload.rfStatus, "unkSensor\0", sizeof("unkSensor\0"));
     return payload;
 }
 
@@ -172,14 +177,14 @@ void writeJsonGetSensor(RF24Payload payloadIn) {
     if      (payloadIn.sensor == TEMP_SENS)  writer.String("temperature");
     else if (payloadIn.sensor == HUMID_SENS) writer.String("humidity");
     else if (payloadIn.sensor == HEAT_SENS)  writer.String("heat_index");
-    writer.Key("sensor_value");
+    writer.Key("sensorValue");
     writer.Double(payloadIn.sensorVal);
 }
 
 void writeJsonGetPin(RF24Payload payloadIn) {
     writer.Key("pin");
     writer.String(std::to_string((int)payloadIn.pin).c_str());
-    writer.Key("pin_value");
+    writer.Key("pinValue");
     writer.String(std::to_string((int)payloadIn.pinVal).c_str());
 }
 

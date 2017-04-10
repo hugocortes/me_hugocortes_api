@@ -1,8 +1,7 @@
-/******************************************************************************
- * @author: Hugo Cortes
- * @file: mesh_example_arduino.ino
- * 
- *****************************************************************************/
+/**
+ * @author Hugo Cortes
+ * @file arduino_mini_f2.ino
+ */
 
 #include <printf.h>
 #include "DHT.h"
@@ -21,9 +20,9 @@ const uint8_t PUT_PIN    = 2;
 const uint8_t GET_SENSOR = 3;
 
 // API Call Strings
-const char* API_GET_SENSOR[] = {"get_sensor"};
-const char* API_GET_PIN[]    = {"get_pin"};
-const char* API_PUT_PIN[]    = {"put_pin"};
+const char* API_GET_SENSOR[] = {"getSensor"};
+const char* API_GET_PIN[]    = {"getPin"};
+const char* API_PUT_PIN[]    = {"putPin"};
 
 // SENSOR VALUES
 const uint8_t TEMP_SENS  = 1;
@@ -59,20 +58,20 @@ void loop()
         payloadIn = S_NRF24::instance()->readRF24Payload();
         switch(payloadIn.cmd){
           case GET_PIN:
-              printf("In get_pin!\n");
+              printf("In getPin!\n");
               sendGetDigitalPin(payloadIn);
               break;
           case PUT_PIN:
-              printf("In put_pin!\n");
+              printf("In putPin!\n");
               sendPutDigitalPin(payloadIn);
               break;
           case GET_SENSOR:
-              printf("In get_sensor!\n");
+              printf("In getSensor!\n");
               sendGetSensor(payloadIn);
               break;
           default:
               RF24Payload payloadOut;
-              strncpy(payloadOut.rfStatus, "invalid_cmd\0", sizeof("invalid_cmd\0"));
+              strncpy(payloadOut.rfStatus, "invalidCmd\0", sizeof("invalidCmd\0"));
               S_NRF24::instance()->sendRF24Payload(payloadOut, MASTER_ID);
               break;
         }
@@ -83,33 +82,37 @@ void sendGetSensor(RF24Payload payloadIn)
 {
     RF24Payload payloadOut;
     bool read = false;
-    float data = NULL;
-    float f = NULL;
-    float h = NULL;
+    float data = NAN;
+    float f = NAN;
+    float h = NAN;
     switch(payloadIn.sensor)
     {
         case TEMP_SENS:
-            for(int _ = 0; _ < 3; _++) data = dht.readTemperature(true);
+            //for(int _ = 0; _ < 3; _++) data = dht.readTemperature(true);
+            data = dht.readTemperature(true);
             break;
         case HUMID_SENS:
-            for(int _ = 0; _ < 3; _++) data = dht.readHumidity();
+            //for(int _ = 0; _ < 3; _++) data = dht.readHumidity();
+            data = dht.readHumidity();
             break;
         case HEAT_SENS:
-            for(int _ = 0; _ < 3; _++)
-            {
-                h = dht.readHumidity();
-                f = dht.readTemperature(true);
-            }
+//            for(int _ = 0; _ < 3; _++)
+//            {
+//                h = dht.readHumidity();
+//                f = dht.readTemperature(true);
+//            }
+            h = dht.readHumidity();
+            f = dht.readTemperature(true);
             if (!isnan(h) && !isnan(f)) data = dht.computeHeatIndex(f,h);
             break;
         default:
-            strncpy(payloadOut.rfStatus, "invalid_sen\0", sizeof("invalid_sen\0"));
+            strncpy(payloadOut.rfStatus, "invalidSen\0", sizeof("invalidSen\0"));
             S_NRF24::instance()->sendRF24Payload(payloadOut, MASTER_ID);
             return;
     }
-    if (isnan(data) or data == NULL) 
+    if (isnan(data)) 
     {
-        strncpy(payloadOut.rfStatus, "sens_err\0", sizeof("sens_err\0"));
+        strncpy(payloadOut.rfStatus, "sensErr\0", sizeof("sensErr\0"));
     }
     else
     {
@@ -139,7 +142,7 @@ void sendGetDigitalPin(RF24Payload payloadIn)
             payloadOut.pinVal = digitalRead(payloadIn.pin);
             break;
         default:
-            strncpy(payloadOut.rfStatus, "invalid_pin\0", sizeof("invalid_pin\0"));
+            strncpy(payloadOut.rfStatus, "invalidPin\0", sizeof("invalidPin\0"));
     }
     S_NRF24::instance()->sendRF24Payload(payloadOut, MASTER_ID);
 }
@@ -161,7 +164,7 @@ void sendPutDigitalPin(RF24Payload payloadIn)
             strncpy(payloadOut.rfStatus, "success\0", sizeof("success\0"));
             break;
         default:
-            strncpy(payloadOut.rfStatus, "invalid_pin\0", sizeof("invalid_pin\0"));
+            strncpy(payloadOut.rfStatus, "invalidPin\0", sizeof("invalidPin\0"));
     }
     S_NRF24::instance()->sendRF24Payload(payloadOut, MASTER_ID);    
 }
@@ -199,5 +202,3 @@ void setupPins(void){
     digitalWrite(7, LOW);
     digitalWrite(9, LOW);
 }
-
-

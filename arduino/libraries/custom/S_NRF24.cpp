@@ -85,9 +85,9 @@ RF24Payload S_NRF24::sendRF24Payload(RF24Payload payload, uint8_t nodeID) {
     if (!mesh.write(&payload, 'M', sizeof(payload), nodeID)) {
         if (!mesh.checkConnection()) {
             printf("Renewing address...\n");
-            mesh.renewAddress(); 
+            mesh.renewAddress(30000); 
         }
-        strncpy(payload.rfStatus, "fail_send\0", sizeof("fail_send\0"));
+        strncpy(payload.rfStatus, "failSend\0", sizeof("failSend\0"));
     }
     else strncpy(payload.rfStatus, "success\0", sizeof("success\0"));
     return payload;
@@ -105,7 +105,7 @@ RF24Payload S_NRF24::readRF24Payload() {
 
     // Wait for a packet to be available flag it as a timeout
     while (!network.available()) {
-        if (signed(millis() - waitBegin) > 500) {
+        if (signed(millis() - waitBegin) > 750) {
             timeout = true;
             break;
         }
@@ -125,7 +125,7 @@ RF24Payload S_NRF24::readRF24Payload() {
                 break;
             default:
                 printf("Rcv bad type %d from 0%o\n",header.type,header.from_node); 
-                strncpy(payloadIn.rfStatus, "fail_rx\0", sizeof("fail_rx\0"));
+                strncpy(payloadIn.rfStatus, "failRx\0", sizeof("failRx\0"));
         }
     }
     return payloadIn;

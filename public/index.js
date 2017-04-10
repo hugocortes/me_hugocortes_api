@@ -27,18 +27,19 @@ app.use(function (err, req, res, next) {
 
 // JSON API
 // GET
-router.get('/rpi/gpio/:id', api.get_gpio);
-router.get('/rpi/gpio/', api.get_gpios);
-router.get('/radio/sensor/', api.get_sensor); // Server call. Sends JSON packet
+router.get('/rpi/gpio/:id', api.getGpio);
+router.get('/rpi/gpio/', api.getGpios);
+router.get('/radio/sensor/', api.getSensor); // Server call. Sends JSON packet
 
+// TODO: Update to use variable id
 // Arduino F1
-router.get('/radio/f1/sensor/:sens', api.get_f1_sensor);
-router.get('/radio/f1/pin/:pin', api.get_f1_pin);
+router.get('/radio/f1/sensor/:sens', api.getF1Sensor);
+router.get('/radio/f1/pin/:pin', api.getF1Pin);
 
 // PUT (router.put did not work?)
-router.post('/radio/f1/pin/:pin', api.put_f1_pin);  // JSON: value
+router.post('/radio/f1/pin/:pin', api.putF1Pin);  // JSON: value
 
-
+// Unknown calls
 router.get('*', api.unknown);
 router.post('*', api.unknown);
 

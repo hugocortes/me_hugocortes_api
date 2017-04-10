@@ -1,8 +1,8 @@
-var util = require('util')
-var exec = require('child_process').exec;
-var fs = require('fs');
+var util  = require('util')
+var exec  = require('child_process').exec;
+var fs    = require('fs');
 var sleep = require('sleep');
-var yaml = require('yamljs');
+var yaml  = require('yamljs');
 
 CONF = yaml.load('config.yaml');
 var RADIO_PACKET       = CONF["DIR"]["RADIO_PACKET"];
@@ -11,25 +11,22 @@ var SCRIPT_RADIO_COMMS = CONF["DIR"]["RADIO_COMMS"];
 var F1_SENSORS         = CONF["F1_SENSORS"];
 var F1_PINS            = CONF["F1_PINS"];
 
+// RPI ---
 // GET
-exports.get_gpio = function(req, res){
+exports.getGpio = function(req, res){
   // res.json({message: 'Hello world!' });
   var packet = JSON.parse(fs.readFileSync(PI_PACKET, "utf8"));
   console.log(packet);
   res.status(200).send(packet[String(req.params.id)]);
 };
 
-exports.get_gpios = function(req, res){
+exports.getGpios = function(req, res){
   console.log('all inputs');
   //res.status(200).send(inputs);
   res.status(200);
 };
 
-
-
-
-
-exports.get_sensor = function(req,res){
+exports.getSensor = function(req,res){
 // api_req, id, cmd, from
   if(req.body.from == null) res.status(500).json({"status":"undefined"});
   else if(F1_SENSORS.indexOf(req.params.sens) > -1){
@@ -42,9 +39,10 @@ exports.get_sensor = function(req,res){
   else res.status(500).json({"status":"undefined"});
 }
 
-exports.get_f1_pin = function(req, res){
+// Arduino ---
+exports.getF1Pin = function(req, res){
   if(F1_PINS.indexOf(req.params.pin) > -1){
-    execute_script(SCRIPT_RADIO_COMMS + " get_pin f1 " + req.params.pin);
+    execute_script(SCRIPT_RADIO_COMMS + " getPin f1 " + req.params.pin);
     sleep.sleep(2);
     var packet = JSON.parse(fs.readFileSync(RADIO_PACKET, "utf8"));
     res.status(200).send(packet);
@@ -52,9 +50,9 @@ exports.get_f1_pin = function(req, res){
   else res.status(500).json({"status":"undefined"});
 }
 
-exports.get_f1_sensor = function(req, res){
+exports.getF1Sensor = function(req, res){
   if(F1_SENSORS.indexOf(req.params.sens) > -1){
-    execute_script(SCRIPT_RADIO_COMMS + " get_sensor f1 " + req.params.sens + " client");
+    execute_script(SCRIPT_RADIO_COMMS + " getSensor f1 " + req.params.sens + " client");
     sleep.sleep(2);
     var packet = JSON.parse(fs.readFileSync(RADIO_PACKET, "utf8"));
     res.status(200).send(packet);
@@ -63,9 +61,9 @@ exports.get_f1_sensor = function(req, res){
 }
 
 // PUT
-exports.put_f1_pin = function(req,res){
+exports.putF1Pin = function(req,res){
   if(F1_PINS.indexOf(req.params.pin) > -1){
-    execute_script(SCRIPT_RADIO_COMMS + " put_pin f1 " + req.params.pin + " " + req.body.value);
+    execute_script(SCRIPT_RADIO_COMMS + " putPin f1 " + req.params.pin + " " + req.body.value);
     sleep.sleep(2);
     var packet = JSON.parse(fs.readFileSync(RADIO_PACKET, "utf8"));
     res.status(200).send(packet);
