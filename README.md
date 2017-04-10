@@ -14,7 +14,7 @@ https://tmrh20.github.io/RF24/RPi.html
 https://github.com/TMRh20  
 
 # API Link
-The base URL for all API calls is: [http://www.api.hugocortes.me/](http:///www.api.hugocortes.me/)
+The base URL for all API calls is: [http://api.hugocortes.me/](http:///api.hugocortes.me/)
 
 Using this link, appending the approriate sub-url will access the API.
 
